@@ -26,6 +26,7 @@ router.get('/', async (req, res, next) => {
 
         res.json({ success: true, data });
     } catch (error) {
+        console.error("GET /api/jobs error: ", error);
         next(error);
     }
 });
