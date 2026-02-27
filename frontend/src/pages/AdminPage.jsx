@@ -41,6 +41,7 @@ const AdminPage = () => {
                 setJobs(jobs.filter(job => job.id !== id));
             }
         } catch (err) {
+            console.error(err);
             alert('Failed to delete job');
         }
     };
@@ -63,6 +64,7 @@ const AdminPage = () => {
                 alert(data.error);
             }
         } catch (err) {
+            console.error(err);
             alert('Failed to add job');
         }
     };

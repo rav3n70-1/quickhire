@@ -22,7 +22,7 @@ const ApplyForm = ({ jobId }) => {
         if (!formData.resume_link) newErrors.resume_link = 'Resume link is required';
         else {
             try { new URL(formData.resume_link); }
-            catch (_) { newErrors.resume_link = 'Invalid URL'; }
+            catch { newErrors.resume_link = 'Invalid URL'; }
         }
 
         setErrors(newErrors);
@@ -48,6 +48,7 @@ const ApplyForm = ({ jobId }) => {
                 setErrors({ submit: data.error });
             }
         } catch (err) {
+            console.error(err);
             setErrors({ submit: 'Failed to submit application' });
         } finally {
             setLoading(false);
