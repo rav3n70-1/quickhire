@@ -1,15 +1,54 @@
 import { useState, useEffect } from 'react';
-import { Trash2, Plus } from 'lucide-react';
+import { Trash2, Plus, CheckCircle, XCircle, X } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
+
+// --- Toast Notification Component ---
+const Toast = ({ message, type = 'success', onClose }) => {
+    useEffect(() => {
+        const timer = setTimeout(onClose, 4000);
+        return () => clearTimeout(timer);
+    }, [onClose]);
+
+    const styles = {
+        success: { bg: '#ECFDF5', border: '#6EE7B7', text: '#065F46', Icon: CheckCircle, iconColor: '#10B981' },
+        error: { bg: '#FFF1F2', border: '#FCA5A5', text: '#991B1B', Icon: XCircle, iconColor: '#EF4444' },
+    };
+    const { bg, border, text, Icon, iconColor } = styles[type];
+
+    return (
+        <div style={{
+            position: 'fixed', top: '24px', right: '24px', zIndex: 9999,
+            display: 'flex', alignItems: 'center', gap: '12px',
+            backgroundColor: bg, border: `1px solid ${border}`, color: text,
+            borderRadius: '8px', padding: '14px 18px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
+            minWidth: '300px', maxWidth: '420px',
+            animation: 'slideIn 0.3s ease',
+        }}>
+            <Icon style={{ color: iconColor, flexShrink: 0 }} size={20} />
+            <span style={{ flex: 1, fontSize: '14px', fontWeight: '500' }}>{message}</span>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: text, opacity: 0.6, padding: '2px' }}>
+                <X size={16} />
+            </button>
+        </div>
+    );
+};
 
 const AdminPage = () => {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [deletingId, setDeletingId] = useState(null);
+    const [toast, setToast] = useState(null);
     const [formData, setFormData] = useState({
         title: '', company: '', location: '', category: '', description: ''
     });
+
+    const showToast = (message, type = 'success') => {
+        setToast({ message, type });
+    };
 
     const fetchJobs = async () => {
         try {
@@ -30,8 +69,10 @@ const AdminPage = () => {
     }, []);
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this job?')) return;
+        if (deletingId) return;
+        if (!window.confirm('Are you sure you want to delete this job listing?')) return;
 
+        setDeletingId(id);
         try {
             const res = await fetch(`${import.meta.env.VITE_API_URL}/jobs/${id}`, {
                 method: 'DELETE'
@@ -39,15 +80,21 @@ const AdminPage = () => {
             const data = await res.json();
             if (data.success) {
                 setJobs(jobs.filter(job => job.id !== id));
+                showToast('Job listing deleted successfully.');
+            } else {
+                showToast(data.error || 'Failed to delete job.', 'error');
             }
         } catch (err) {
             console.error(err);
-            alert('Failed to delete job');
+            showToast('Network error. Failed to delete job.', 'error');
+        } finally {
+            setDeletingId(null);
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSubmitting(true);
         try {
             const res = await fetch(`${import.meta.env.VITE_API_URL}/jobs`, {
                 method: 'POST',
@@ -60,28 +107,45 @@ const AdminPage = () => {
                 setJobs([data.data, ...jobs]);
                 setIsAdding(false);
                 setFormData({ title: '', company: '', location: '', category: '', description: '' });
+                showToast('New job listing published successfully!');
             } else {
-                alert(data.error);
+                showToast(data.error || 'Failed to post job.', 'error');
             }
         } catch (err) {
             console.error(err);
-            alert('Failed to add job');
+            showToast('Network error. Failed to post job.', 'error');
+        } finally {
+            setSubmitting(false);
         }
     };
 
     return (
         <div className="max-w-5xl mx-auto">
+            {/* Toast Notification */}
+            {toast && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    onClose={() => setToast(null)}
+                />
+            )}
+
             <div className="flex justify-between items-center mb-8">
-                <h1 className="text-3xl font-bold text-dark">Admin Dashboard</h1>
-                <Button onClick={() => setIsAdding(!isAdding)} className="flex items-center">
-                    <Plus className="w-4 h-4 mr-2" />
+                <div>
+                    <h1 className="text-3xl font-bold" style={{ color: '#202430' }}>Admin Dashboard</h1>
+                    <p style={{ color: '#515B6F', marginTop: '4px', fontSize: '15px' }}>
+                        Manage your job listings
+                    </p>
+                </div>
+                <Button onClick={() => setIsAdding(!isAdding)} className="flex items-center gap-2">
+                    <Plus className="w-4 h-4" />
                     {isAdding ? 'Cancel' : 'Post New Job'}
                 </Button>
             </div>
 
             {isAdding && (
                 <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8 shadow-sm">
-                    <h2 className="text-xl font-bold mb-4">Post a New Job</h2>
+                    <h2 className="text-xl font-bold mb-4" style={{ color: '#25324B' }}>Post a New Job</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <Input label="Job Title" required value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} />
@@ -101,6 +165,10 @@ const AdminPage = () => {
                                     <option value="Design">Design</option>
                                     <option value="Marketing">Marketing</option>
                                     <option value="Sales">Sales</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Business">Business</option>
+                                    <option value="Human Resource">Human Resource</option>
+                                    <option value="Technology">Technology</option>
                                 </select>
                             </div>
                         </div>
@@ -108,7 +176,9 @@ const AdminPage = () => {
 
                         <div className="flex justify-end gap-3">
                             <Button type="button" variant="secondary" onClick={() => setIsAdding(false)}>Cancel</Button>
-                            <Button type="submit">Publish Job</Button>
+                            <Button type="submit" disabled={submitting}>
+                                {submitting ? 'Publishing...' : 'Publish Job'}
+                            </Button>
                         </div>
                     </form>
                 </div>
@@ -133,30 +203,36 @@ const AdminPage = () => {
                                 </tr>
                             ) : jobs.length === 0 ? (
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-4 text-center text-light">No jobs posted yet.</td>
+                                    <td colSpan="5" className="px-6 py-16 text-center">
+                                        <div style={{ fontSize: '40px', marginBottom: '12px' }}>📋</div>
+                                        <p style={{ color: '#515B6F', fontWeight: '500' }}>No jobs posted yet.</p>
+                                        <p style={{ color: '#7C8493', fontSize: '14px', marginTop: '4px' }}>Click &quot;Post New Job&quot; to add your first listing.</p>
+                                    </td>
                                 </tr>
                             ) : (
                                 jobs.map((job) => (
-                                    <tr key={job.id} className="hover:bg-gray-50">
+                                    <tr key={job.id} className="hover:bg-gray-50" style={{ transition: 'background 0.15s' }}>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium text-dark">{job.title}</div>
+                                            <div className="text-sm font-medium" style={{ color: '#25324B' }}>{job.title}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-light">{job.company}</div>
+                                            <div className="text-sm" style={{ color: '#515B6F' }}>{job.company}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-primary-blue">
                                                 {job.category}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-light">
-                                            {new Date(job.created_at).toLocaleDateString()}
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: '#515B6F' }}>
+                                            {new Date(job.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <button
                                                 onClick={() => handleDelete(job.id)}
-                                                className="text-red-600 hover:text-red-900 focus:outline-none"
+                                                disabled={deletingId === job.id}
+                                                className="text-red-500 hover:text-red-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                                 title="Delete Job"
+                                                aria-label={`Delete job: ${job.title}`}
                                             >
                                                 <Trash2 className="w-5 h-5" />
                                             </button>
@@ -167,6 +243,13 @@ const AdminPage = () => {
                         </tbody>
                     </table>
                 </div>
+                {jobs.length > 0 && (
+                    <div style={{ padding: '12px 24px', borderTop: '1px solid #F3F4F6', backgroundColor: '#F9FAFB' }}>
+                        <p style={{ fontSize: '13px', color: '#7C8493' }}>
+                            {jobs.length} {jobs.length === 1 ? 'listing' : 'listings'} total
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );
