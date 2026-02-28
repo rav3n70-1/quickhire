@@ -8,7 +8,7 @@ const Layout = ({ children }) => {
                 <div className="max-w-7xl mx-auto px-6 lg:px-8">
                     <div className="flex h-20 items-center justify-between">
                         {/* Left Group: Logo + Nav */}
-                        <div className="flex items-center gap-10">
+                        <div className="flex items-center gap-4 md:gap-10">
                             {/* Logo */}
                             <a href="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
                                 <img src={Logo} alt="QuickHire Logo" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
@@ -16,16 +16,17 @@ const Layout = ({ children }) => {
                             </a>
 
                             {/* Nav */}
-                            <nav className="flex items-center gap-8">
+                            <nav className="hidden md:flex items-center gap-8">
                                 <a href="/" style={{ color: '#515B6F', fontWeight: '500', fontSize: '15px', textDecoration: 'none' }}>Find Jobs</a>
-                                <a href="#" style={{ color: '#515B6F', fontWeight: '500', fontSize: '15px', textDecoration: 'none' }}>Browse Companies</a>
+                                {/* TODO: Implement Browse Companies page */}
+                                <a href="#" onClick={(e) => e.preventDefault()} aria-disabled="true" style={{ color: '#515B6F', fontWeight: '500', fontSize: '15px', textDecoration: 'none', cursor: 'not-allowed' }}>Browse Companies</a>
                             </nav>
                         </div>
 
                         {/* Right Group: CTA */}
-                        <div className="flex items-center gap-4">
-                            <a href="/admin" style={{ color: '#4640DE', fontWeight: '600', fontSize: '15px', textDecoration: 'none' }}>Login</a>
-                            <a href="/admin" style={{ backgroundColor: '#4640DE', color: '#FFFFFF', padding: '10px 20px', borderRadius: '4px', fontWeight: '600', fontSize: '15px', textDecoration: 'none', display: 'inline-block' }}>Sign Up</a>
+                        <div className="hidden md:flex items-center gap-4">
+                            <a href="/login" style={{ color: '#4640DE', fontWeight: '600', fontSize: '15px', textDecoration: 'none' }}>Login</a>
+                            <a href="/signup" style={{ backgroundColor: '#4640DE', color: '#FFFFFF', padding: '10px 20px', borderRadius: '4px', fontWeight: '600', fontSize: '15px', textDecoration: 'none', display: 'inline-block' }}>Sign Up</a>
                         </div>
                     </div>
                 </div>
@@ -38,9 +39,9 @@ const Layout = ({ children }) => {
             {/* Footer */}
             <footer style={{ backgroundColor: '#202430', color: '#FFFFFF', paddingTop: '56px', paddingBottom: '56px' }}>
                 <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                    <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 2fr', gap: '48px' }}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-12">
                         {/* Brand */}
-                        <div>
+                        <div className="lg:col-span-2">
                             <div className="flex items-center gap-2 mb-4">
                                 <img src={Logo} alt="QuickHire Logo" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
                                 <span style={{ fontWeight: '700', fontSize: '20px' }}>QuickHire</span>
@@ -51,7 +52,7 @@ const Layout = ({ children }) => {
                         </div>
 
                         {/* About */}
-                        <div>
+                        <div className="lg:col-span-1">
                             <h4 style={{ fontWeight: '600', fontSize: '16px', marginBottom: '20px' }}>About</h4>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                 {['Companies', 'Pricing', 'Terms', 'Advice', 'Privacy Policy'].map(item => (
@@ -61,7 +62,7 @@ const Layout = ({ children }) => {
                         </div>
 
                         {/* Resources */}
-                        <div>
+                        <div className="lg:col-span-1">
                             <h4 style={{ fontWeight: '600', fontSize: '16px', marginBottom: '20px' }}>Resources</h4>
                             <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '12px' }}>
                                 {['Help Docs', 'Guide', 'Updates', 'Contact Us'].map(item => (
@@ -71,7 +72,7 @@ const Layout = ({ children }) => {
                         </div>
 
                         {/* Newsletter */}
-                        <div>
+                        <div className="lg:col-span-2 md:col-span-2">
                             <h4 style={{ fontWeight: '600', fontSize: '16px', marginBottom: '12px' }}>Get job notifications</h4>
                             <p style={{ color: '#9199A3', fontSize: '14px', marginBottom: '20px' }}>The latest job news, articles, sent to your inbox weekly.</p>
                             <div style={{ display: 'flex', gap: '8px' }}>
@@ -86,8 +87,7 @@ const Layout = ({ children }) => {
                             </div>
                         </div>
                     </div>
-
-                    <div style={{ marginTop: '48px', paddingTop: '24px', borderTop: '1px solid #343A47', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className="flex flex-col md:flex-row justify-between items-center mt-12 pt-6 border-t border-gray-700 text-center md:text-left gap-4">
                         <p style={{ color: '#9199A3', fontSize: '14px' }}>© {new Date().getFullYear()} QuickHire. All rights reserved.</p>
                     </div>
                 </div>

@@ -30,13 +30,13 @@ const HomePage = () => {
     const [location, setLocation] = useState('');
     const [category, setCategory] = useState('');
 
-    const fetchJobs = async () => {
+    const fetchJobs = async (customCategory = category) => {
         setLoading(true);
         try {
             const params = new URLSearchParams();
             if (search) params.append('search', search);
             if (location) params.append('location', location);
-            if (category) params.append('category', category);
+            if (customCategory) params.append('category', customCategory);
 
             const url = `${import.meta.env.VITE_API_URL}/jobs${params.toString() ? `?${params.toString()}` : ''}`;
             const response = await fetch(url);
@@ -88,33 +88,33 @@ const HomePage = () => {
                 }} />
 
                 <div className="max-w-7xl mx-auto px-6 lg:px-8" style={{ position: 'relative', zIndex: 1 }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'center' }}>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         {/* Left text */}
-                        <div>
-                            <h1 style={{ fontSize: '56px', fontWeight: '800', color: '#202430', lineHeight: '1.15', marginBottom: '20px', marginTop: 0 }}>
+                        <div className="text-center lg:text-left">
+                            <h1 className="text-4xl lg:text-5xl xl:text-6xl font-extrabold text-[#202430] leading-tight mb-5 mt-4 lg:mt-0">
                                 Discover more than{' '}
-                                <span style={{ color: '#26A4FF', position: 'relative', display: 'inline-block' }}>
+                                <span style={{ color: '#26A4FF', position: 'relative', display: 'inline-block', zIndex: 1 }}>
                                     5000+ Jobs
-                                    <img src={UnderlineImg} alt="underline" style={{ position: 'absolute', bottom: '-16px', left: 0, width: '100%', height: 'auto', zIndex: -1 }} />
+                                    <img src={UnderlineImg} alt="" style={{ position: 'absolute', bottom: '-8px', left: 0, width: '100%', height: 'auto' }} />
                                 </span>
                             </h1>
-                            <p style={{ fontSize: '16px', color: '#515B6F', marginBottom: '32px', lineHeight: '1.7', maxWidth: '420px' }}>
+                            <p className="text-base text-[#515B6F] mb-8 leading-relaxed max-w-[420px] mx-auto lg:mx-0">
                                 Great platform for the job seeker that passionate about startups. Find your dream job easier.
                             </p>
 
                             {/* Stats Row */}
-                            <div style={{ display: 'flex', gap: '40px' }}>
+                            <div className="flex justify-center lg:justify-start gap-6 lg:gap-10">
                                 {[{ n: '1.8K+', label: 'Live Job' }, { n: '800K+', label: 'Companies' }, { n: '2.8M', label: 'Candidates' }].map(stat => (
                                     <div key={stat.n}>
-                                        <div style={{ fontSize: '28px', fontWeight: '700', color: '#202430' }}>{stat.n}</div>
-                                        <div style={{ fontSize: '14px', color: '#515B6F' }}>{stat.label}</div>
+                                        <div className="text-2xl lg:text-3xl font-bold text-[#202430]">{stat.n}</div>
+                                        <div className="text-sm text-[#515B6F]">{stat.label}</div>
                                     </div>
                                 ))}
                             </div>
                         </div>
 
                         {/* Right image placeholder */}
-                        <div style={{ display: 'flex', justifyContent: 'center', position: 'relative', height: '100%', alignItems: 'flex-end', paddingTop: '40px' }}>
+                        <div className="justify-center relative h-full items-end pt-10 hidden lg:flex">
                             {/* Vectors behind person */}
                             <div style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 0, top: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <img src={PatternImg} alt="Background abstract pattern" style={{ width: '96%', height: '96%', objectFit: 'contain', opacity: 0.8 }} />
@@ -124,38 +124,25 @@ const HomePage = () => {
                     </div>
 
                     {/* Search Bar */}
-                    <form onSubmit={handleSearch} style={{
-                        marginTop: '-130px',
-                        position: 'relative',
-                        zIndex: 10,
-                        backgroundColor: '#FFFFFF',
-                        borderRadius: '12px',
-                        boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: '12px',
-                        gap: '0',
-                        maxWidth: '90%'
-                    }}>
-                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', padding: '0 16px', gap: '12px' }}>
+                    <form onSubmit={handleSearch} className="mt-8 lg:-mt-[110px] relative z-10 bg-white rounded-xl shadow-[0_12px_40px_rgba(0,0,0,0.12)] flex flex-col lg:flex-row items-center p-4 lg:p-3 gap-4 lg:gap-0 max-w-full lg:max-w-[90%] mx-auto lg:mx-0 lg:ml-0">
+                        <div className="flex-1 w-full flex items-center lg:px-4 gap-3 border-b lg:border-b-0 lg:border-r border-[#D6DDEB] pb-4 lg:pb-0">
                             <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#7C8493" strokeWidth="2">
                                 <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
                             </svg>
                             <input
                                 type="text"
                                 placeholder="Job title or keyword"
-                                style={{ flex: 1, border: 'none', outline: 'none', fontSize: '15px', color: '#25324B', background: 'transparent' }}
+                                className="flex-1 border-none outline-none text-[15px] text-[#25324B] bg-transparent w-full"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
                         </div>
-                        <div style={{ width: '1px', height: '40px', backgroundColor: '#D6DDEB' }} />
-                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', padding: '0 16px', gap: '12px' }}>
+                        <div className="flex-1 w-full flex items-center lg:px-4 gap-3 border-b lg:border-b-0 lg:border-r border-[#D6DDEB] pb-4 lg:pb-0">
                             <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#7C8493" strokeWidth="2">
                                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" /><circle cx="12" cy="9" r="2.5" />
                             </svg>
                             <select
-                                style={{ flex: 1, border: 'none', outline: 'none', fontSize: '15px', color: '#25324B', background: 'transparent', cursor: 'pointer' }}
+                                className="flex-1 border-none outline-none text-[15px] text-[#25324B] bg-transparent cursor-pointer w-full"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
                             >
@@ -167,13 +154,12 @@ const HomePage = () => {
                                 <option value="Berlin">Berlin</option>
                             </select>
                         </div>
-                        <div style={{ width: '1px', height: '40px', backgroundColor: '#D6DDEB' }} />
-                        <div style={{ flex: 1, display: 'flex', alignItems: 'center', padding: '0 16px', gap: '12px' }}>
+                        <div className="flex-1 w-full flex items-center lg:px-4 gap-3 pb-4 lg:pb-0">
                             <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#7C8493" strokeWidth="2">
                                 <rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
                             </svg>
                             <select
-                                style={{ flex: 1, border: 'none', outline: 'none', fontSize: '15px', color: '#25324B', background: 'transparent', cursor: 'pointer' }}
+                                className="flex-1 border-none outline-none text-[15px] text-[#25324B] bg-transparent cursor-pointer w-full"
                                 value={category}
                                 onChange={(e) => setCategory(e.target.value)}
                             >
@@ -187,13 +173,7 @@ const HomePage = () => {
                         </div>
                         <button
                             type="submit"
-                            style={{
-                                backgroundColor: '#4640DE', color: '#FFFFFF',
-                                padding: '12px 28px', borderRadius: '8px',
-                                fontWeight: '700', fontSize: '15px',
-                                border: 'none', cursor: 'pointer',
-                                whiteSpace: 'nowrap', marginLeft: '12px'
-                            }}
+                            className="bg-[#4640DE] text-white px-7 py-3 rounded-lg font-bold text-[15px] border-none cursor-pointer whitespace-nowrap lg:ml-3 w-full lg:w-auto text-center"
                         >
                             Search my job
                         </button>
@@ -202,17 +182,17 @@ const HomePage = () => {
             </div>
 
             {/* Companies Section */}
-            <div style={{ backgroundColor: '#FFFFFF', padding: '60px 0 20px 0' }}>
+            <div className="bg-white py-12 lg:py-16">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                    <p style={{ color: '#515B6F', fontSize: '16px', marginBottom: '32px' }}>
+                    <p className="text-[#515B6F] text-base mb-8 text-center lg:text-left">
                         Companies we helped grow
                     </p>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
-                        <img src={VodafoneLogo} alt="Vodafone" style={{ height: '28px', objectFit: 'contain', opacity: 0.8 }} />
-                        <img src={IntelLogo} alt="Intel" style={{ height: '28px', objectFit: 'contain', opacity: 0.8 }} />
-                        <img src={TeslaLogo} alt="Tesla" style={{ height: '28px', objectFit: 'contain', opacity: 0.8 }} />
-                        <img src={AmdLogo} alt="AMD" style={{ height: '32px', objectFit: 'contain', opacity: 0.8 }} />
-                        <img src={TalkitLogo} alt="Talkit" style={{ height: '28px', objectFit: 'contain', opacity: 0.8 }} />
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:flex lg:justify-between items-center justify-items-center gap-8 lg:gap-0">
+                        <img src={VodafoneLogo} alt="Vodafone" className="h-6 lg:h-7 object-contain opacity-80" />
+                        <img src={IntelLogo} alt="Intel" className="h-6 lg:h-7 object-contain opacity-80" />
+                        <img src={TeslaLogo} alt="Tesla" className="h-6 lg:h-7 object-contain opacity-80" />
+                        <img src={AmdLogo} alt="AMD" className="h-7 lg:h-8 object-contain opacity-80" />
+                        <img src={TalkitLogo} alt="Talkit" className="h-6 lg:h-7 object-contain opacity-80 col-span-2 md:col-span-1 lg:col-span-auto" />
                     </div>
                 </div>
             </div>
@@ -232,13 +212,13 @@ const HomePage = () => {
                         </a>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         {CATEGORIES.map((cat) => {
                             const isActive = category === cat.name;
                             return (
                                 <button
                                     key={cat.name}
-                                    onClick={() => { setCategory(cat.name); fetchJobs(); }}
+                                    onClick={() => { setCategory(cat.name); fetchJobs(cat.name); }}
                                     style={{
                                         backgroundColor: isActive ? '#4640DE' : '#FFFFFF',
                                         border: '1px solid #D6DDEB',
@@ -296,7 +276,7 @@ const HomePage = () => {
                     )}
 
                     {loading ? (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             {[1, 2, 3, 4].map((n) => (
                                 <div key={n} style={{ backgroundColor: '#FFF', border: '1px solid #D6DDEB', borderRadius: '8px', padding: '24px' }}>
                                     <div style={{ width: '56px', height: '56px', borderRadius: '8px', backgroundColor: '#E8E8E8', marginBottom: '16px', animation: 'pulse 2s infinite' }} />
@@ -306,7 +286,7 @@ const HomePage = () => {
                             ))}
                         </div>
                     ) : jobs.length > 0 ? (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }}>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             {jobs.map((job) => (
                                 <JobCard key={job.id} job={job} />
                             ))}
@@ -341,36 +321,20 @@ const HomePage = () => {
             </div>
 
             {/* CTA Banner */}
-            <div style={{ padding: '0 0 80px' }}>
+            <div className="pb-20">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                    <div style={{
-                        backgroundColor: '#4640DE',
-                        borderRadius: '8px',
-                        padding: '64px',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        position: 'relative',
-                        overflow: 'hidden'
-                    }}>
+                    <div className="bg-[#4640DE] rounded-[8px] p-10 lg:p-16 flex flex-col md:flex-row justify-between items-center relative overflow-hidden gap-8 text-center md:text-left">
                         {/* Geometric decoration */}
-                        <div style={{ position: 'absolute', bottom: '-20px', left: '-20px', width: '200px', height: '200px', backgroundColor: '#3730C9', borderRadius: '32px', opacity: 0.6 }} />
-                        <div style={{ position: 'relative', zIndex: 1 }}>
-                            <h2 style={{ color: '#FFFFFF', fontSize: '40px', fontWeight: '800', marginBottom: '12px', marginTop: 0, lineHeight: 1.2 }}>
+                        <div className="absolute -bottom-5 -left-5 w-[200px] h-[200px] bg-[#3730C9] rounded-[32px] opacity-60 flex-shrink-0" />
+                        <div className="relative z-10">
+                            <h2 className="text-white text-3xl md:text-[40px] font-extrabold mb-3 mt-0 leading-tight">
                                 Start posting<br />jobs today
                             </h2>
-                            <p style={{ color: '#CCCCF5', fontSize: '16px', margin: 0 }}>Start posting jobs for only $10.</p>
+                            <p className="text-[#CCCCF5] text-base m-0">Start posting jobs for only $10.</p>
                         </div>
                         <button
-                            onClick={() => window.location.href = '/admin'}
-                            style={{
-                                backgroundColor: '#FFFFFF', color: '#4640DE',
-                                padding: '16px 32px', borderRadius: '4px',
-                                fontWeight: '700', fontSize: '16px',
-                                border: 'none', cursor: 'pointer',
-                                position: 'relative', zIndex: 1,
-                                flexShrink: 0
-                            }}
+                            onClick={() => window.location.href = '/signup'}
+                            className="bg-white text-[#4640DE] px-8 py-4 rounded font-bold text-base border-none cursor-pointer relative z-10 shrink-0"
                         >
                             Sign Up For Free
                         </button>

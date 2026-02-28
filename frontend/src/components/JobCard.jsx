@@ -18,71 +18,43 @@ const JobCard = ({ job }) => {
     const catStyle = categoryColors[job.category] || { bg: '#EFF1FF', text: '#4640DE', border: '#B5B8FF' };
 
     return (
-        <Link to={`/jobs/${job.id}`} style={{ textDecoration: 'none', display: 'block' }}>
-            <div style={{
-                backgroundColor: '#FFFFFF',
-                border: '1px solid #D6DDEB',
-                borderRadius: '8px',
-                padding: '24px',
-                transition: 'all 0.2s ease',
-                cursor: 'pointer'
-            }}
-                onMouseEnter={e => {
-                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)';
-                    e.currentTarget.style.borderColor = '#4640DE';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                }}
-                onMouseLeave={e => {
-                    e.currentTarget.style.boxShadow = 'none';
-                    e.currentTarget.style.borderColor = '#D6DDEB';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                }}
+        <Link to={`/jobs/${job.id}`} className="block no-underline">
+            <div
+                className="bg-white border border-[#D6DDEB] rounded-lg p-6 transition-all duration-200 ease-in-out cursor-pointer hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:border-[#4640DE] hover:-translate-y-[2px]"
             >
                 {/* Top Row: Logo + "Full Time" badge */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-                    <div style={{
-                        width: '56px', height: '56px', borderRadius: '8px', backgroundColor: bgColor,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        color: 'white', fontWeight: '700', fontSize: '18px',
-                        flexShrink: 0,
-                        border: '1px solid #EEEEEE'
-                    }}>
+                <div className="flex justify-between items-start mb-4">
+                    <div
+                        className="w-14 h-14 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0 border border-[#EEEEEE]"
+                        style={{ backgroundColor: bgColor }}
+                    >
                         {initials}
                     </div>
-                    <span style={{
-                        border: '1px solid #4640DE', color: '#4640DE',
-                        padding: '4px 12px', borderRadius: '4px',
-                        fontSize: '13px', fontWeight: '600'
-                    }}>
+                    <span className="border border-[#4640DE] text-[#4640DE] px-3 py-1 rounded text-[13px] font-semibold">
                         Full Time
                     </span>
                 </div>
 
                 {/* Job Title + Company */}
-                <h3 style={{ fontSize: '18px', fontWeight: '700', color: '#25324B', marginBottom: '8px', marginTop: 0 }}>{job.title}</h3>
-                <p style={{ color: '#515B6F', fontSize: '14px', marginBottom: '16px', marginTop: 0 }}>
+                <h3 className="text-lg font-bold text-[#25324B] mb-2 mt-0">{job.title}</h3>
+                <p className="text-[#515B6F] text-sm mb-4 mt-0">
                     {job.company} &bull; {job.location}
                 </p>
 
                 {/* Divider */}
-                <div style={{ borderTop: '1px solid #D6DDEB', marginBottom: '16px' }} />
+                <div className="border-t border-[#D6DDEB] mb-4" />
 
                 {/* Badges */}
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                    <span style={{
-                        backgroundColor: '#EBFDF3', color: '#22C55E',
-                        border: '1px solid #ABEFC6',
-                        padding: '4px 12px', borderRadius: '4px',
-                        fontSize: '13px', fontWeight: '500'
-                    }}>
+                <div className="flex gap-2 flex-wrap">
+                    <span className="bg-[#EBFDF3] text-[#22C55E] border border-[#ABEFC6] px-3 py-1 rounded text-[13px] font-medium">
                         Full-Time
                     </span>
-                    <span style={{
-                        backgroundColor: catStyle.bg, color: catStyle.text,
-                        border: `1px solid ${catStyle.border}`,
-                        padding: '4px 12px', borderRadius: '4px',
-                        fontSize: '13px', fontWeight: '500'
-                    }}>
+                    <span
+                        className="px-3 py-1 rounded text-[13px] font-medium"
+                        style={{
+                            backgroundColor: catStyle.bg, color: catStyle.text, border: `1px solid ${catStyle.border}`
+                        }}
+                    >
                         {job.category}
                     </span>
                 </div>
