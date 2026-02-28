@@ -35,6 +35,8 @@ const Toast = ({ message, type = 'success', onClose }) => {
     );
 };
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+
 const AdminPage = () => {
     const [jobs, setJobs] = useState([]);
     const [applications, setApplications] = useState([]);
@@ -55,7 +57,7 @@ const AdminPage = () => {
 
     const fetchJobs = async () => {
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/jobs`);
+            const res = await fetch(`${API_BASE_URL}/jobs`);
             const data = await res.json();
             if (data.success) {
                 setJobs(data.data);
@@ -70,7 +72,7 @@ const AdminPage = () => {
     const fetchApplications = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/applications`, {
+            const res = await fetch(`${API_BASE_URL}/applications`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
@@ -102,7 +104,7 @@ const AdminPage = () => {
         setDeletingId(id);
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/jobs/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/jobs/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -130,7 +132,7 @@ const AdminPage = () => {
         setSubmitting(true);
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/jobs`, {
+            const res = await fetch(`${API_BASE_URL}/jobs`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -191,8 +193,8 @@ const AdminPage = () => {
                 <button
                     onClick={() => setActiveTab('jobs')}
                     className={`pb-4 px-6 text-sm font-medium transition-colors ${activeTab === 'jobs'
-                            ? 'border-b-2 border-primary-blue text-primary-blue'
-                            : 'text-light hover:text-dark border-b-2 border-transparent'
+                        ? 'border-b-2 border-primary-blue text-primary-blue'
+                        : 'text-light hover:text-dark border-b-2 border-transparent'
                         }`}
                 >
                     Job Listings
@@ -200,8 +202,8 @@ const AdminPage = () => {
                 <button
                     onClick={() => setActiveTab('applications')}
                     className={`pb-4 px-6 text-sm font-medium transition-colors ${activeTab === 'applications'
-                            ? 'border-b-2 border-primary-blue text-primary-blue'
-                            : 'text-light hover:text-dark border-b-2 border-transparent'
+                        ? 'border-b-2 border-primary-blue text-primary-blue'
+                        : 'text-light hover:text-dark border-b-2 border-transparent'
                         }`}
                 >
                     Applications

@@ -24,6 +24,11 @@ app.use((err, req, res, next) => {
     res.status(500).json({ success: false, error: 'Internal Server Error' });
 });
 
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+// Start the server only if run directly (local development)
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+    });
+}
+
+export default app;

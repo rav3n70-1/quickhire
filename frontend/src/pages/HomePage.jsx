@@ -22,6 +22,8 @@ const CATEGORIES = [
     { name: 'Human Resource', icon: '👥', count: '346 jobs available' },
 ];
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+
 const HomePage = () => {
     const [jobs, setJobs] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -38,7 +40,7 @@ const HomePage = () => {
             if (location) params.append('location', location);
             if (customCategory) params.append('category', customCategory);
 
-            const url = `${import.meta.env.VITE_API_URL}/jobs${params.toString() ? `?${params.toString()}` : ''}`;
+            const url = `${API_BASE_URL}/jobs${params.toString() ? `?${params.toString()}` : ''}`;
             const response = await fetch(url);
             const result = await response.json();
 

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/Button';
 import { Input } from '../components/Input';
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+
 const SignupPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -17,7 +19,7 @@ const SignupPage = () => {
         setError(null);
 
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/auth/signup`, {
+            const res = await fetch(`${API_BASE_URL}/auth/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
