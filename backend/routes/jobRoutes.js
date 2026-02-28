@@ -35,7 +35,7 @@ router.get('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { data, error } = await supabase.from('jobs').select('*').eq('id', id).single();
+        const { data, error } = await supabase.from('jobs').select('*').eq('id', id).maybeSingle();
 
         if (error) throw error;
         if (!data) return res.status(404).json({ success: false, error: 'Job not found' });

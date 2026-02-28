@@ -38,7 +38,13 @@ router.post('/', async (req, res, next) => {
             { job_id, name, email, resume_link, cover_note }
         ]).select().single();
 
-        if (error) throw error;
+        if (error) {
+            // Check for Supabase foreign key constraint violation (invalid job_id)
+            if (error.code === '23503') {
+                return res.status(400).json({ success: false, error: 'Invalid Job ID: Job does not exist.' });
+            }
+            throw error;
+        }
 
         res.status(201).json({ success: true, data });
     } catch (error) {
