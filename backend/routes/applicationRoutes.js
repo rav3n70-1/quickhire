@@ -1,5 +1,6 @@
 import express from 'express';
 import supabase from '../supabase.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -16,6 +17,37 @@ const isValidUrl = (url) => {
         return false;
     }
 };
+
+// GET /api/applications (Protected - Admin only)
+router.get('/', requireAuth, async (req, res, next) => {
+    try {
+        const { data, error } = await supabase
+            .from('applications')
+            .select(`
+                id,
+                name,
+                email,
+                resume_link,
+                cover_note,
+                created_at,
+                job_id,
+                jobs (
+                    title,
+                    company
+                )
+            `)
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error("Fetch Applications Error:", error);
+            return res.status(500).json({ success: false, error: 'Internal Server Error' });
+        }
+
+        res.json({ success: true, count: data.length, data });
+    } catch (error) {
+        next(error);
+    }
+});
 
 // POST /api/applications
 router.post('/', async (req, res, next) => {

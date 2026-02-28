@@ -1,5 +1,6 @@
 import express from 'express';
 import supabase from '../supabase.js';
+import { requireAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -46,8 +47,8 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
-// POST /api/jobs
-router.post('/', async (req, res, next) => {
+// POST /api/jobs (Protected)
+router.post('/', requireAuth, async (req, res, next) => {
     try {
         const { title, company, location, category, description } = req.body;
 
@@ -67,8 +68,8 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-// DELETE /api/jobs/:id
-router.delete('/:id', async (req, res, next) => {
+// DELETE /api/jobs/:id (Protected)
+router.delete('/:id', requireAuth, async (req, res, next) => {
     try {
         const { id } = req.params;
         const { error } = await supabase.from('jobs').delete().eq('id', id);

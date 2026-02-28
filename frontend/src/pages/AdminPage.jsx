@@ -37,11 +37,14 @@ const Toast = ({ message, type = 'success', onClose }) => {
 
 const AdminPage = () => {
     const [jobs, setJobs] = useState([]);
+    const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [appsLoading, setAppsLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [deletingId, setDeletingId] = useState(null);
     const [toast, setToast] = useState(null);
+    const [activeTab, setActiveTab] = useState('jobs'); // 'jobs' or 'applications'
     const [formData, setFormData] = useState({
         title: '', company: '', location: '', category: '', description: ''
     });
@@ -64,8 +67,32 @@ const AdminPage = () => {
         }
     };
 
+    const fetchApplications = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/applications`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (res.status === 401) {
+                window.location.href = '/login';
+                return;
+            }
+
+            const data = await res.json();
+            if (data.success) {
+                setApplications(data.data);
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setAppsLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchJobs();
+        fetchApplications();
     }, []);
 
     const handleDelete = async (id) => {
@@ -74,9 +101,15 @@ const AdminPage = () => {
 
         setDeletingId(id);
         try {
+            const token = localStorage.getItem('token');
             const res = await fetch(`${import.meta.env.VITE_API_URL}/jobs/${id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
             });
+            if (res.status === 401) {
+                window.location.href = '/login';
+                return;
+            }
             const data = await res.json();
             if (data.success) {
                 setJobs(jobs.filter(job => job.id !== id));
@@ -96,11 +129,19 @@ const AdminPage = () => {
         e.preventDefault();
         setSubmitting(true);
         try {
+            const token = localStorage.getItem('token');
             const res = await fetch(`${import.meta.env.VITE_API_URL}/jobs`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
                 body: JSON.stringify(formData)
             });
+            if (res.status === 401) {
+                window.location.href = '/login';
+                return;
+            }
             const data = await res.json();
 
             if (data.success) {
@@ -134,16 +175,40 @@ const AdminPage = () => {
                 <div>
                     <h1 className="text-3xl font-bold" style={{ color: '#202430' }}>Admin Dashboard</h1>
                     <p style={{ color: '#515B6F', marginTop: '4px', fontSize: '15px' }}>
-                        Manage your job listings
+                        Manage your job listings and applications
                     </p>
                 </div>
-                <Button onClick={() => setIsAdding(!isAdding)} className="flex items-center gap-2">
-                    <Plus className="w-4 h-4" />
-                    {isAdding ? 'Cancel' : 'Post New Job'}
-                </Button>
+                {activeTab === 'jobs' && (
+                    <Button onClick={() => setIsAdding(!isAdding)} className="flex items-center gap-2">
+                        <Plus className="w-4 h-4" />
+                        {isAdding ? 'Cancel' : 'Post New Job'}
+                    </Button>
+                )}
             </div>
 
-            {isAdding && (
+            {/* Tabs */}
+            <div className="flex border-b border-gray-200 mb-8">
+                <button
+                    onClick={() => setActiveTab('jobs')}
+                    className={`pb-4 px-6 text-sm font-medium transition-colors ${activeTab === 'jobs'
+                            ? 'border-b-2 border-primary-blue text-primary-blue'
+                            : 'text-light hover:text-dark border-b-2 border-transparent'
+                        }`}
+                >
+                    Job Listings
+                </button>
+                <button
+                    onClick={() => setActiveTab('applications')}
+                    className={`pb-4 px-6 text-sm font-medium transition-colors ${activeTab === 'applications'
+                            ? 'border-b-2 border-primary-blue text-primary-blue'
+                            : 'text-light hover:text-dark border-b-2 border-transparent'
+                        }`}
+                >
+                    Applications
+                </button>
+            </div>
+
+            {isAdding && activeTab === 'jobs' && (
                 <div className="bg-white rounded-lg border border-gray-200 p-6 mb-8 shadow-sm">
                     <h2 className="text-xl font-bold mb-4" style={{ color: '#25324B' }}>Post a New Job</h2>
                     <form onSubmit={handleSubmit} className="space-y-4">
@@ -184,73 +249,147 @@ const AdminPage = () => {
                 </div>
             )}
 
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                            <tr>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-light uppercase tracking-wider">Job Title</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-light uppercase tracking-wider">Company</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-light uppercase tracking-wider">Category</th>
-                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-light uppercase tracking-wider">Date Posted</th>
-                                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-light uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {loading ? (
+            {activeTab === 'jobs' ? (
+                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
                                 <tr>
-                                    <td colSpan="5" className="px-6 py-4 text-center text-light">Loading jobs...</td>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-light uppercase tracking-wider">Job Title</th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-light uppercase tracking-wider">Company</th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-light uppercase tracking-wider">Category</th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-light uppercase tracking-wider">Date Posted</th>
+                                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-light uppercase tracking-wider">Actions</th>
                                 </tr>
-                            ) : jobs.length === 0 ? (
-                                <tr>
-                                    <td colSpan="5" className="px-6 py-16 text-center">
-                                        <div style={{ fontSize: '40px', marginBottom: '12px' }}>📋</div>
-                                        <p style={{ color: '#515B6F', fontWeight: '500' }}>No jobs posted yet.</p>
-                                        <p style={{ color: '#7C8493', fontSize: '14px', marginTop: '4px' }}>Click &quot;Post New Job&quot; to add your first listing.</p>
-                                    </td>
-                                </tr>
-                            ) : (
-                                jobs.map((job) => (
-                                    <tr key={job.id} className="hover:bg-gray-50" style={{ transition: 'background 0.15s' }}>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm font-medium" style={{ color: '#25324B' }}>{job.title}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm" style={{ color: '#515B6F' }}>{job.company}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-primary-blue">
-                                                {job.category}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: '#515B6F' }}>
-                                            {new Date(job.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                            <button
-                                                onClick={() => handleDelete(job.id)}
-                                                disabled={deletingId === job.id}
-                                                className="text-red-500 hover:text-red-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                                title="Delete Job"
-                                                aria-label={`Delete job: ${job.title}`}
-                                            >
-                                                <Trash2 className="w-5 h-5" />
-                                            </button>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {loading ? (
+                                    <tr>
+                                        <td colSpan="5" className="px-6 py-4 text-center text-light">Loading jobs...</td>
+                                    </tr>
+                                ) : jobs.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="5" className="px-6 py-16 text-center">
+                                            <div style={{ fontSize: '40px', marginBottom: '12px' }}>📋</div>
+                                            <p style={{ color: '#515B6F', fontWeight: '500' }}>No jobs posted yet.</p>
+                                            <p style={{ color: '#7C8493', fontSize: '14px', marginTop: '4px' }}>Click &quot;Post New Job&quot; to add your first listing.</p>
                                         </td>
                                     </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-                {jobs.length > 0 && (
-                    <div style={{ padding: '12px 24px', borderTop: '1px solid #F3F4F6', backgroundColor: '#F9FAFB' }}>
-                        <p style={{ fontSize: '13px', color: '#7C8493' }}>
-                            {jobs.length} {jobs.length === 1 ? 'listing' : 'listings'} total
-                        </p>
+                                ) : (
+                                    jobs.map((job) => (
+                                        <tr key={job.id} className="hover:bg-gray-50" style={{ transition: 'background 0.15s' }}>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm font-medium" style={{ color: '#25324B' }}>{job.title}</div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm" style={{ color: '#515B6F' }}>{job.company}</div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-primary-blue">
+                                                    {job.category}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: '#515B6F' }}>
+                                                {new Date(job.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <button
+                                                    onClick={() => handleDelete(job.id)}
+                                                    disabled={deletingId === job.id}
+                                                    className="text-red-500 hover:text-red-700 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                    title="Delete Job"
+                                                    aria-label={`Delete job: ${job.title}`}
+                                                >
+                                                    <Trash2 className="w-5 h-5" />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
                     </div>
-                )}
-            </div>
+                    {jobs.length > 0 && (
+                        <div style={{ padding: '12px 24px', borderTop: '1px solid #F3F4F6', backgroundColor: '#F9FAFB' }}>
+                            <p style={{ fontSize: '13px', color: '#7C8493' }}>
+                                {jobs.length} {jobs.length === 1 ? 'listing' : 'listings'} total
+                            </p>
+                        </div>
+                    )}
+                </div>
+            ) : (
+                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-gray-200">
+                            <thead className="bg-gray-50">
+                                <tr>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-light uppercase tracking-wider">Candidate</th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-light uppercase tracking-wider">Job Applied For</th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-light uppercase tracking-wider">Contact</th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-light uppercase tracking-wider">Applied Date</th>
+                                    <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-light uppercase tracking-wider">Resume</th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-white divide-y divide-gray-200">
+                                {appsLoading ? (
+                                    <tr>
+                                        <td colSpan="5" className="px-6 py-4 text-center text-light">Loading applications...</td>
+                                    </tr>
+                                ) : applications.length === 0 ? (
+                                    <tr>
+                                        <td colSpan="5" className="px-6 py-16 text-center">
+                                            <div style={{ fontSize: '40px', marginBottom: '12px' }}>📄</div>
+                                            <p style={{ color: '#515B6F', fontWeight: '500' }}>No applications received yet.</p>
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    applications.map((app) => (
+                                        <tr key={app.id} className="hover:bg-gray-50" style={{ transition: 'background 0.15s' }}>
+                                            <td className="px-6 py-4">
+                                                <div className="text-sm font-medium" style={{ color: '#25324B' }}>{app.name}</div>
+                                                {app.cover_note && (
+                                                    <div className="text-xs text-light mt-1 max-w-xs truncate" title={app.cover_note}>
+                                                        {app.cover_note}
+                                                    </div>
+                                                )}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <div className="text-sm font-medium" style={{ color: '#202430' }}>{app.jobs?.title || 'Unknown Job'}</div>
+                                                <div className="text-xs text-light">{app.jobs?.company || ''}</div>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap">
+                                                <a href={`mailto:${app.email}`} className="text-sm text-primary-blue hover:underline">
+                                                    {app.email}
+                                                </a>
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm" style={{ color: '#515B6F' }}>
+                                                {new Date(app.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                <a
+                                                    href={app.resume_link}
+                                                    target="_blank"
+                                                    rel="noreferrer"
+                                                    className="inline-flex items-center gap-1 text-primary-blue hover:text-primary-dark transition-colors"
+                                                >
+                                                    View Resume
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                    {applications.length > 0 && (
+                        <div style={{ padding: '12px 24px', borderTop: '1px solid #F3F4F6', backgroundColor: '#F9FAFB' }}>
+                            <p style={{ fontSize: '13px', color: '#7C8493' }}>
+                                {applications.length} {applications.length === 1 ? 'application' : 'applications'} total
+                            </p>
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

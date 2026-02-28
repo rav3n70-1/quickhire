@@ -25,8 +25,25 @@ const Layout = ({ children }) => {
 
                         {/* Right Group: CTA */}
                         <div className="hidden md:flex items-center gap-4">
-                            <a href="/login" style={{ color: '#4640DE', fontWeight: '600', fontSize: '15px', textDecoration: 'none' }}>Login</a>
-                            <a href="/signup" style={{ backgroundColor: '#4640DE', color: '#FFFFFF', padding: '10px 20px', borderRadius: '4px', fontWeight: '600', fontSize: '15px', textDecoration: 'none', display: 'inline-block' }}>Sign Up</a>
+                            {localStorage.getItem('token') ? (
+                                <>
+                                    <a href="/admin" style={{ color: '#4640DE', fontWeight: '600', fontSize: '15px', textDecoration: 'none' }}>Admin Dashboard</a>
+                                    <button
+                                        onClick={() => {
+                                            localStorage.removeItem('token');
+                                            window.location.href = '/login';
+                                        }}
+                                        style={{ backgroundColor: '#202430', color: '#FFFFFF', padding: '10px 20px', borderRadius: '4px', fontWeight: '600', fontSize: '15px', textDecoration: 'none', border: 'none', cursor: 'pointer' }}
+                                    >
+                                        Logout
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <a href="/login" style={{ color: '#4640DE', fontWeight: '600', fontSize: '15px', textDecoration: 'none' }}>Login</a>
+                                    <a href="/signup" style={{ backgroundColor: '#4640DE', color: '#FFFFFF', padding: '10px 20px', borderRadius: '4px', fontWeight: '600', fontSize: '15px', textDecoration: 'none', display: 'inline-block' }}>Sign Up</a>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
