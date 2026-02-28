@@ -1,25 +1,28 @@
+import Logo from '../assets/Logo_copy.png';
+
 const Layout = ({ children }) => {
     return (
         <div className="min-h-screen flex flex-col" style={{ fontFamily: 'Epilogue, sans-serif' }}>
             {/* Header */}
-            <header style={{ borderBottom: '1px solid #D6DDEB', backgroundColor: '#FFFFFF' }} className="sticky top-0 z-10">
+            <header style={{ backgroundColor: '#F8F8FD' }} className="sticky top-0 z-10 w-full">
                 <div className="max-w-7xl mx-auto px-6 lg:px-8">
-                    <div className="flex justify-between h-16 items-center">
-                        {/* Logo */}
-                        <a href="/" className="flex items-center gap-2">
-                            <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #4640DE, #26A4FF)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '700', fontSize: '14px' }}>
-                                Q
-                            </div>
-                            <span style={{ fontWeight: '700', fontSize: '20px', color: '#202430' }}>QuickHire</span>
-                        </a>
+                    <div className="flex h-20 items-center justify-between">
+                        {/* Left Group: Logo + Nav */}
+                        <div className="flex items-center gap-10">
+                            {/* Logo */}
+                            <a href="/" className="flex items-center gap-2" style={{ textDecoration: 'none' }}>
+                                <img src={Logo} alt="QuickHire Logo" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
+                                <span style={{ fontWeight: '700', fontSize: '20px', color: '#202430' }}>QuickHire</span>
+                            </a>
 
-                        {/* Nav */}
-                        <nav className="flex items-center gap-8">
-                            <a href="/" style={{ color: '#515B6F', fontWeight: '500', fontSize: '15px', textDecoration: 'none' }}>Find Jobs</a>
-                            <a href="/admin" style={{ color: '#515B6F', fontWeight: '500', fontSize: '15px', textDecoration: 'none' }}>Post a Job</a>
-                        </nav>
+                            {/* Nav */}
+                            <nav className="flex items-center gap-8">
+                                <a href="/" style={{ color: '#515B6F', fontWeight: '500', fontSize: '15px', textDecoration: 'none' }}>Find Jobs</a>
+                                <a href="#" style={{ color: '#515B6F', fontWeight: '500', fontSize: '15px', textDecoration: 'none' }}>Browse Companies</a>
+                            </nav>
+                        </div>
 
-                        {/* CTA */}
+                        {/* Right Group: CTA */}
                         <div className="flex items-center gap-4">
                             <a href="/admin" style={{ color: '#4640DE', fontWeight: '600', fontSize: '15px', textDecoration: 'none' }}>Login</a>
                             <a href="/admin" style={{ backgroundColor: '#4640DE', color: '#FFFFFF', padding: '10px 20px', borderRadius: '4px', fontWeight: '600', fontSize: '15px', textDecoration: 'none', display: 'inline-block' }}>Sign Up</a>
@@ -39,9 +42,7 @@ const Layout = ({ children }) => {
                         {/* Brand */}
                         <div>
                             <div className="flex items-center gap-2 mb-4">
-                                <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'linear-gradient(135deg, #4640DE, #26A4FF)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: '700', fontSize: '14px' }}>
-                                    Q
-                                </div>
+                                <img src={Logo} alt="QuickHire Logo" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
                                 <span style={{ fontWeight: '700', fontSize: '20px' }}>QuickHire</span>
                             </div>
                             <p style={{ color: '#9199A3', fontSize: '14px', lineHeight: '1.7', maxWidth: '260px' }}>

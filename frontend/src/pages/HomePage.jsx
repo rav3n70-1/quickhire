@@ -1,5 +1,15 @@
 import { useState, useEffect } from 'react';
 import JobCard from '../components/JobCard';
+import PersonImg from '../assets/person.png';
+import PatternImg from '../assets/Pattern.png';
+import UnderlineImg from '../assets/underline.png';
+import VodafoneLogo from '../assets/vodafone.png';
+import IntelLogo from '../assets/intel.png';
+import TeslaLogo from '../assets/tesla.png';
+import AmdLogo from '../assets/amd.png';
+import TalkitLogo from '../assets/talkit.png';
+
+
 
 const CATEGORIES = [
     { name: 'Design', icon: '🎨', count: '235 jobs available' },
@@ -61,7 +71,7 @@ const HomePage = () => {
                 backgroundColor: '#F8F8FD',
                 position: 'relative',
                 overflow: 'hidden',
-                paddingTop: '80px',
+                paddingTop: '20px',
                 paddingBottom: '80px'
             }}>
                 {/* Geometric decorations */}
@@ -83,9 +93,9 @@ const HomePage = () => {
                         <div>
                             <h1 style={{ fontSize: '56px', fontWeight: '800', color: '#202430', lineHeight: '1.15', marginBottom: '20px', marginTop: 0 }}>
                                 Discover more than{' '}
-                                <span style={{ color: '#4640DE' }}>
+                                <span style={{ color: '#26A4FF', position: 'relative', display: 'inline-block' }}>
                                     5000+ Jobs
-                                    <div style={{ height: '4px', background: '#4640DE', borderRadius: '2px', marginTop: '4px' }} />
+                                    <img src={UnderlineImg} alt="underline" style={{ position: 'absolute', bottom: '-16px', left: 0, width: '100%', height: 'auto', zIndex: -1 }} />
                                 </span>
                             </h1>
                             <p style={{ fontSize: '16px', color: '#515B6F', marginBottom: '32px', lineHeight: '1.7', maxWidth: '420px' }}>
@@ -104,30 +114,28 @@ const HomePage = () => {
                         </div>
 
                         {/* Right image placeholder */}
-                        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                            <div style={{
-                                width: '360px', height: '320px',
-                                background: 'linear-gradient(135deg, #4640DE22, #4640DE44)',
-                                borderRadius: '12px',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                position: 'relative',
-                                overflow: 'hidden'
-                            }}>
-                                <div style={{ fontSize: '80px' }}>🧑‍💻</div>
+                        <div style={{ display: 'flex', justifyContent: 'center', position: 'relative', height: '100%', alignItems: 'flex-end', paddingTop: '40px' }}>
+                            {/* Vectors behind person */}
+                            <div style={{ position: 'absolute', width: '100%', height: '100%', zIndex: 0, top: 0, left: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <img src={PatternImg} alt="Background abstract pattern" style={{ width: '96%', height: '96%', objectFit: 'contain', opacity: 0.8 }} />
                             </div>
+                            <img src={PersonImg} alt="Person pointing to jobs" style={{ width: '104%', maxWidth: 'none', height: 'auto', minHeight: '416px', objectFit: 'contain', zIndex: 1, position: 'relative', transform: 'translateX(5%)' }} />
                         </div>
                     </div>
 
                     {/* Search Bar */}
                     <form onSubmit={handleSearch} style={{
-                        marginTop: '48px',
+                        marginTop: '-130px',
+                        position: 'relative',
+                        zIndex: 10,
                         backgroundColor: '#FFFFFF',
-                        borderRadius: '8px',
-                        boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
+                        borderRadius: '12px',
+                        boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
                         display: 'flex',
                         alignItems: 'center',
                         padding: '12px',
-                        gap: '0'
+                        gap: '0',
+                        maxWidth: '90%'
                     }}>
                         <div style={{ flex: 1, display: 'flex', alignItems: 'center', padding: '0 16px', gap: '12px' }}>
                             <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#7C8493" strokeWidth="2">
@@ -181,10 +189,10 @@ const HomePage = () => {
                             type="submit"
                             style={{
                                 backgroundColor: '#4640DE', color: '#FFFFFF',
-                                padding: '14px 28px', borderRadius: '4px',
+                                padding: '12px 28px', borderRadius: '8px',
                                 fontWeight: '700', fontSize: '15px',
                                 border: 'none', cursor: 'pointer',
-                                whiteSpace: 'nowrap', marginLeft: '8px'
+                                whiteSpace: 'nowrap', marginLeft: '12px'
                             }}
                         >
                             Search my job
@@ -193,56 +201,77 @@ const HomePage = () => {
                 </div>
             </div>
 
+            {/* Companies Section */}
+            <div style={{ backgroundColor: '#FFFFFF', padding: '60px 0 20px 0' }}>
+                <div className="max-w-7xl mx-auto px-6 lg:px-8">
+                    <p style={{ color: '#515B6F', fontSize: '16px', marginBottom: '32px' }}>
+                        Companies we helped grow
+                    </p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <img src={VodafoneLogo} alt="Vodafone" style={{ height: '28px', objectFit: 'contain', opacity: 0.8 }} />
+                        <img src={IntelLogo} alt="Intel" style={{ height: '28px', objectFit: 'contain', opacity: 0.8 }} />
+                        <img src={TeslaLogo} alt="Tesla" style={{ height: '28px', objectFit: 'contain', opacity: 0.8 }} />
+                        <img src={AmdLogo} alt="AMD" style={{ height: '32px', objectFit: 'contain', opacity: 0.8 }} />
+                        <img src={TalkitLogo} alt="Talkit" style={{ height: '28px', objectFit: 'contain', opacity: 0.8 }} />
+                    </div>
+                </div>
+            </div>
+
             {/* Explore by Category */}
             <div style={{ padding: '80px 0', backgroundColor: '#FFFFFF' }}>
                 <div className="max-w-7xl mx-auto px-6 lg:px-8">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
-                        <h2 style={{ fontSize: '32px', fontWeight: '700', color: '#202430', margin: 0 }}>
-                            Explore by{' '}
-                            <span style={{ color: '#4640DE' }}>category</span>
-                        </h2>
+                        <a href="#jobs" style={{ textDecoration: 'none' }}>
+                            <h2 style={{ fontSize: '32px', fontWeight: '700', color: '#202430', margin: 0, cursor: 'pointer' }}>
+                                Explore by{' '}
+                                <span style={{ color: '#4640DE' }}>category</span>
+                            </h2>
+                        </a>
                         <a href="#jobs" style={{ color: '#4640DE', fontWeight: '600', fontSize: '15px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
                             Show all jobs <span>→</span>
                         </a>
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
-                        {CATEGORIES.map((cat, idx) => (
-                            <button
-                                key={cat.name}
-                                onClick={() => { setCategory(cat.name); fetchJobs(); }}
-                                style={{
-                                    backgroundColor: idx === 2 ? '#4640DE' : '#FFFFFF',
-                                    border: '1px solid #D6DDEB',
-                                    borderRadius: '8px',
-                                    padding: '28px 24px',
-                                    textAlign: 'left',
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s ease',
-                                    display: 'block',
-                                    width: '100%'
-                                }}
-                            >
-                                <div style={{
-                                    fontSize: '28px', marginBottom: '20px',
-                                    color: idx === 2 ? '#FFFFFF' : '#4640DE'
-                                }}>
-                                    {cat.icon}
-                                </div>
-                                <div style={{
-                                    fontWeight: '700', fontSize: '16px', marginBottom: '8px',
-                                    color: idx === 2 ? '#FFFFFF' : '#25324B'
-                                }}>
-                                    {cat.name}
-                                </div>
-                                <div style={{
-                                    fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px',
-                                    color: idx === 2 ? '#CCCCF5' : '#515B6F'
-                                }}>
-                                    {cat.count} <span>→</span>
-                                </div>
-                            </button>
-                        ))}
+                        {CATEGORIES.map((cat) => {
+                            const isActive = category === cat.name;
+                            return (
+                                <button
+                                    key={cat.name}
+                                    onClick={() => { setCategory(cat.name); fetchJobs(); }}
+                                    style={{
+                                        backgroundColor: isActive ? '#4640DE' : '#FFFFFF',
+                                        border: '1px solid #D6DDEB',
+                                        borderRadius: '8px',
+                                        padding: '28px 24px',
+                                        textAlign: 'left',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s ease',
+                                        display: 'block',
+                                        width: '100%'
+                                    }}
+                                >
+                                    <div style={{
+                                        fontSize: '28px', marginBottom: '20px',
+                                        color: isActive ? '#FFFFFF' : '#4640DE'
+                                    }}>
+                                        {cat.icon}
+                                    </div>
+                                    <div style={{
+                                        fontWeight: '700', fontSize: '16px', marginBottom: '8px',
+                                        color: isActive ? '#FFFFFF' : '#25324B'
+                                    }}>
+                                        {cat.name}
+                                    </div>
+                                    <div style={{
+                                        fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px',
+                                        color: isActive ? '#CCCCF5' : '#515B6F'
+                                    }}>
+                                        {cat.count} <span>→</span>
+                                    </div>
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
             </div>
