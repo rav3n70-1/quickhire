@@ -9,6 +9,12 @@ if (!supabaseUrl || !supabaseKey) {
   console.error("Missing Supabase credentials in .env file");
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+    detectSessionInUrl: false
+  }
+});
 
 export default supabase;

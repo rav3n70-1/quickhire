@@ -35,7 +35,8 @@ const ApplyForm = ({ jobId }) => {
 
         setLoading(true);
         try {
-            const res = await fetch(`${import.meta.env.VITE_API_URL}/applications`, {
+            const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+            const res = await fetch(`${API_BASE_URL}/applications`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ...formData, job_id: jobId })
@@ -92,7 +93,8 @@ const JobDetailsPage = () => {
     useEffect(() => {
         const fetchJob = async () => {
             try {
-                const res = await fetch(`${import.meta.env.VITE_API_URL}/jobs/${id}`);
+                const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+                const res = await fetch(`${API_BASE_URL}/jobs/${id}`);
                 const data = await res.json();
                 if (data.success) {
                     setJob(data.data);

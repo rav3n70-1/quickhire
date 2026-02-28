@@ -43,6 +43,7 @@ router.get('/:id', async (req, res, next) => {
 
         res.json({ success: true, data });
     } catch (error) {
+        console.error("GET /api/jobs/:id error: ", error);
         next(error);
     }
 });
@@ -64,6 +65,7 @@ router.post('/', requireAuth, async (req, res, next) => {
 
         res.status(201).json({ success: true, data });
     } catch (error) {
+        console.error("POST /api/jobs error: ", error);
         next(error);
     }
 });
